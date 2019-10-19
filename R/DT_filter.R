@@ -11,83 +11,16 @@
 #' )
 #' @importFrom htmltools htmlEscape
 myFilter = function(data, params) {
+  cat(file = stderr(), "called myFilter\n")
   n = nrow(data)
   q = params
-  ci = q$search[['caseInsensitive']] == 'true'
+
   # users may be updating the table too frequently
-  if (length(q$columns) != ncol(data)) return(list(
-    draw = as.integer(q$draw),
-    recordsTotal = n,
-    recordsFiltered = 0,
-    data = list(),
-    DT_rows_all = seq_len(n),
-    DT_rows_current = list()
-  ))
+  if (cols_out_of_sync(data, params)) return(empty_payload(n, params$draw))
 
-  # global searching
-  # for some reason, q$search might be NULL, leading to error `if (logical(0))`
-  if (length(v <- q$search[['value']]) > 0) {
-    if (!identical(q$search[['smart']], 'false')) {
-      v = unlist(strsplit(gsub('^\\s+|\\s+$', '', v), '\\s+'))
-    }
-  }
-  if (length(v) == 0) v = ''
-  m = if ((nv <- length(v)) > 1) array(FALSE, c(dim(data), nv)) else logical(n)
-  # TODO: this searching method may not be efficient and need optimization
-  i = if (!identical(v, '')) {
-    for (j in seq_len(ncol(data))) {
-      if (q$columns[[j]][['searchable']] != 'true') next
-      for (k in seq_len(nv)) {
-        i0 = grep2(
-          v[k], as.character(data[, j]), fixed = q$search[['regex']] == 'false',
-          ignore.case = ci
-        )
-        if (nv > 1) m[i0, j, k] = TRUE else m[i0] = TRUE
-      }
-    }
-    which(if (nv > 1) apply(m, 1, function(z) all(colSums(z) > 0)) else m)
-  } else seq_len(n)
-
-  # search by columns
-  if (length(i)) for (j in names(q$columns)) {
-    col = q$columns[[j]]
-    # if the j-th column is not searchable or the search string is "", skip it
-    if (col[['searchable']] != 'true') next
-    if ((k <- col[['search']][['value']]) == '') next
-    j = as.integer(j)
-    dj = data[, j + 1]
-    ij = if (is.numeric(dj) || is.Date(dj)) {
-      which(filterRange(dj, k))
-    } else if (is.factor(dj)) {
-      which(dj %in% fromJSON(k))
-    } else if (is.logical(dj)) {
-      which(dj %in% as.logical(fromJSON(k)))
-    } else {
-      grep2(k, as.character(dj), fixed = col[['search']][['regex']] == 'false',
-            ignore.case = ci)
-    }
-    i = intersect(ij, i)
-    if (length(i) == 0) break
-  }
-  if (length(i) != n) data = data[i, , drop = FALSE]
+  i <- seq_len(n)  # i is created as part of filtering above, which we're ignoring for now
   iAll = i  # row indices of filtered data
 
-  # sorting
-  oList = list()
-  for (ord in q$order) {
-    k = ord[['column']]  # which column to sort
-    d = ord[['dir']]     # direction asc/desc
-    if (q$columns[[k]][['orderable']] != 'true') next
-    col = data[, as.integer(k) + 1]
-    oList[[length(oList) + 1]] = (if (d == 'asc') identity else `-`)(
-      if (is.numeric(col)) col else xtfrm(col)
-    )
-  }
-  if (length(oList)) {
-    i = do.call(order, oList)
-    data = data[i, , drop = FALSE]
-    iAll = iAll[i]
-  }
   # paging
   if (q$length != '-1') {
     len = as.integer(q$length)
@@ -119,8 +52,8 @@ myFilter = function(data, params) {
   list(
     draw = as.integer(q$draw),
     recordsTotal = n,
-    recordsFiltered = nrow(data),
-    data = cleanDataFrame(fdata),
+    recordsFiltered = n,
+    data = cleanDataFrame(fdata),  # fdata is the paged data
     DT_rows_all = iAll,
     DT_rows_current = iCurrent
   )
