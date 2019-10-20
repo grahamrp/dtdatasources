@@ -1,3 +1,25 @@
+test_that("filter", {
+
+  expect_true(TRUE)
+
+
+})
+
+test_that("query_to_order_by", {
+  q <- list(
+    order =
+      list(`0` = list(column = "0", dir = "asc"),
+           `1` = list(column = "2", dir = "desc"))
+  )
+  result <- query_to_order_by(q)
+  expected <- "ORDER BY 1 asc, 3 desc"
+  expect_equal(result, expected)
+
+  # Case when no ordering specified
+  q <- list()
+  expect_equal(query_to_order_by(q), "")
+})
+
 test_that("get_page_indices edge cases", {
 
   # page_len -1 should return data and all indices

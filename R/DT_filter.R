@@ -13,29 +13,22 @@
 myFilter = function(data, params) {
   cat(file = stderr(), "called myFilter\n")
   n = get_total_rows(con, tbl)
+  iAll = seq_len(n)
   q = params
 
   # use "data" for column names to translate beteen indices and field names
   cn <- colnames(data)
 
-
   # users may be updating the table too frequently
   if (cols_out_of_sync(data, params)) return(empty_payload(n, params$draw))
-
-  iAll = seq_len(n)
 
   # paging
   iCurrent <- get_page_indices(q$start, q$length, iAll)
   fdata <- get_page(con, "mtcars", q)
 
-  if (q$escape != 'false') {
-    k = seq_len(ncol(fdata))
-    if (q$escape != 'true') {
-      # q$escape might be negative indices, e.g. c(-1, -5)
-      k = k[as.integer(strsplit(q$escape, ',')[[1]])]
-    }
-    for (j in k) if (maybe_character(fdata[, j])) fdata[, j] = htmlEscape(fdata[, j])
-  }
+
+  # Escape data as html if required
+  fdata <- escape_data(fdata, q)
 
   # TODO: if iAll is just 1:n, is it necessary to pass this vector to JSON, then
   # to R? When n is large, it may not be very efficient
@@ -48,6 +41,19 @@ myFilter = function(data, params) {
     DT_rows_current = iCurrent
   )
 }
+
+escape_data <- function(fdata, q) {
+  if (q$escape != 'false') {
+    k = seq_len(ncol(fdata))
+    if (q$escape != 'true') {
+      # q$escape might be negative indices, e.g. c(-1, -5)
+      k = k[as.integer(strsplit(q$escape, ',')[[1]])]
+    }
+    for (j in k) if (maybe_character(fdata[, j])) fdata[, j] = htmlEscape(fdata[, j])
+  }
+  fdata
+}
+
 
 get_page_indices <- function(page_start, page_len, iAll) {
   len = as.integer(page_len)
@@ -77,7 +83,6 @@ calc_page_indices <- function(start, len, max_index) {
 
 get_total_rows <- function(con, tbl) {
   query <- glue_sql("SELECT COUNT (*) AS n FROM {`tbl`}", .con = con)
-  cat(file = stderr(), query, "\n")
   result <- dbGetQuery(con, query)
   result$n
 }
@@ -86,11 +91,25 @@ get_total_rows <- function(con, tbl) {
 # TODO: work out the interface - do we need indices or start/len to query DB?
 get_page <- function(con, tbl, q) {
   # Translate dt query info into a sql query
-  query <- glue_sql("SELECT * FROM {`tbl`}
-                    LIMIT {q$length} OFFSET {q$start};", .con = con)
-  cat(file = stderr(), query, "\n")
+  query <- glue_sql("SELECT * FROM {`tbl`} ",
+                    query_to_order_by(q),
+                    " LIMIT {q$length} OFFSET {q$start}",
+                    .con = con)
+  print(query)
   dbGetQuery(con, query)
 }
+
+# Return ORDER BY clause or "", accounting for zero-based col indexing of q
+query_to_order_by <- function(q) {
+  order <- q$order
+  if (is.null(order)) return("")
+
+  orderings <- map_chr(order, ~paste(as.integer(.x$column) + 1, .x$dir))
+  orderings <- paste(orderings, collapse = ", ")
+
+  paste("ORDER BY", orderings)
+}
+
 
 # treat factors as characters
 maybe_character = function(x) {
