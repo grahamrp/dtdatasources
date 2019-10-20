@@ -12,8 +12,12 @@
 #' @importFrom htmltools htmlEscape
 myFilter = function(data, params) {
   cat(file = stderr(), "called myFilter\n")
-  n = nrow(data)
+  n = get_total_rows(con, tbl)
   q = params
+
+  # use "data" for column names to translate beteen indices and field names
+  cn <- colnames(data)
+
 
   # users may be updating the table too frequently
   if (cols_out_of_sync(data, params)) return(empty_payload(n, params$draw))
@@ -22,7 +26,7 @@ myFilter = function(data, params) {
 
   # paging
   iCurrent <- get_page_indices(q$start, q$length, iAll)
-  fdata <- get_page(data, iCurrent)
+  fdata <- get_page(con, "mtcars", q)
 
   if (q$escape != 'false') {
     k = seq_len(ncol(fdata))
@@ -71,10 +75,21 @@ calc_page_indices <- function(start, len, max_index) {
   i
 }
 
+get_total_rows <- function(con, tbl) {
+  query <- glue_sql("SELECT COUNT (*) AS n FROM {`tbl`}", .con = con)
+  cat(file = stderr(), query, "\n")
+  result <- dbGetQuery(con, query)
+  result$n
+}
+
 # Get the page of data given the current indices
 # TODO: work out the interface - do we need indices or start/len to query DB?
-get_page <- function(data, iCurrent) {
-  data[iCurrent, , drop = FALSE]
+get_page <- function(con, tbl, q) {
+  # Translate dt query info into a sql query
+  query <- glue_sql("SELECT * FROM {`tbl`}
+                    LIMIT {q$length} OFFSET {q$start};", .con = con)
+  cat(file = stderr(), query, "\n")
+  dbGetQuery(con, query)
 }
 
 # treat factors as characters
