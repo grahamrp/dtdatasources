@@ -1,4 +1,4 @@
 library(testthat)
-library(dtbackend)
+library(dtdatasources)
 
-test_check("dtbackend")
+test_check("dtdatasources")
