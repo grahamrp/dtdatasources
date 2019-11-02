@@ -18,14 +18,18 @@ and pagination data.}
 Simple implementation showing how to implement a \code{query_fun} for a sqlite DB.
 }
 \details{
-This function can be provided to sql_filter_factory to describe how to
+This function can be provided to \code{sql_filter_factory} to describe how to
 fetch a datatable payload from a sqlite table.
 
-Use as a template to implement other backends.
+This implementation provides paging and sorting, but filtering and row indices
+filters are not yet implemented.
 
-Will be called via \code{sql_filter_factory} with arguments
-\code{con}, \code{page}, and \code{...} where \code{...} are extra arguments
-passed to \code{sql_filter_factory}.
+This function will be called via \code{sql_filter_factory} with arguments
+
+\code{con}, \code{page}, and \code{...} (where \code{...} are any extra
+arguments given to \code{sql_filter_factory}). With this example an additional
+\code{tbl} parameter has been implemented, which would be expected to be
+passed in when \code{sql_filter_factory} is called.
 }
 \examples{
 \dontrun{
