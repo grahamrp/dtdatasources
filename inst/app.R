@@ -7,15 +7,10 @@ con <- dbConnect(RSQLite::SQLite(), ":memory:")
 dbWriteTable(con, "mtcars", mtcars)
 
 ui <- fluidPage(
-  verbatimTextOutput("debug"),
   DTOutput("tbl")
 )
 
 server <- function(input, output, session) {
-
-  output$debug <- renderPrint({
-    input$tbl_rows_selected
-  })
 
   # Create an initial dataframe. This only needs to contain column names, and
   # need not have any rows.

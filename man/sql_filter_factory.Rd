@@ -11,6 +11,8 @@ sql_filter_factory(con, query_fun, ...)
 
 \item{query_fun}{function that takes \code{con} and \code{params} parameters
 and returns payload for a datatable. See \code{query_sqlite} for an example.}
+
+\item{...}{Additional arguments passed to \code{query_fun}.}
 }
 \value{
 function conforming to a DT funcFilter interface.

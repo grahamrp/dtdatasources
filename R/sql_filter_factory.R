@@ -9,6 +9,7 @@
 #' @param con DBI database connection for \code{query_fun} to use.
 #' @param query_fun function that takes \code{con} and \code{params} parameters
 #'   and returns payload for a datatable. See \code{query_sqlite} for an example.
+#' @param ... Additional arguments passed to \code{query_fun}.
 #' @export
 #' @examples
 #' \dontrun{
@@ -19,7 +20,7 @@
 sql_filter_factory <- function(con, query_fun, ...) {
 
   con <- force(con)
-  get_data <- force(query_fun)
+  query_fun <- force(query_fun)
 
   function(data, params) {
     # Note, "data" argument is ignored as we're getting records from a database.
