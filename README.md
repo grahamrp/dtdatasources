@@ -32,9 +32,12 @@ devtools::install_github("grahamrp/dtdatasources")
       - \[ \] filtering
       - \[ \] row selection
 
+### Contributing
+
 So far I’ve only written a basic SQLite implementation, but would like
-to create more. If you would like to help, please see the
-[Contributing](#contributing) section.
+to create more. Feedback, bug reports, fixes, and feature requests are
+welcome, see the [current
+issues](http://github.com/grahamrp/dtdatasources/issues).
 
 ## About Custom DT Data Sources
 
@@ -60,7 +63,7 @@ The `dtdatasources` package will provide implementations of `funcFilter`
 for various datasources, for you to use directly, or as examples to
 adapt to your own implementations.
 
-## Sqlite Example
+## SQLite Example
 
 This example shows how to connect a server-side datatable to a table in
 a SQLite database. Take a look at
@@ -121,12 +124,6 @@ adapts the `DT:::dataTablesFilter` code on
 [GitHub](https://github.com/rstudio/DT/blob/master/R/shiny.R), which is
 the default `funcFilter` for filtering/sorting/paging dataframes on the
 server.
-
-## Contributing
-
-Feedback, bug reports, fixes, and feature requests are welcome; file
-issues or seek support
-[here](http://github.com/grahamrp/dtdatasources/issues).
 
 ## Some References for `funcFilter`
 
