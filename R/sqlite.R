@@ -19,18 +19,19 @@
 #' @param params named list provided by a datatable containing sorting, filtering
 #'   and pagination data.
 #' @param tbl string, the table/view in sqlite.
+#' @param id_field string, optional. Field used to identify a row when using \code{input$tbl_rows_selected}.
 #' @export
 #' @examples
 #' \dontrun{
 #' sql_filter_factory(con, query_sqlite, tbl = "mtcars")
 #' }
-query_sqlite <- function(con, params, tbl) {
+query_sqlite <- function(con, params, tbl, id_field = NA) {
 
   recordsTotal = get_sqlite_count(con, tbl)
   recordsFiltered = recordsTotal  # Not implemented
   data = get_sqlite_page(con, params, tbl)
   DT_rows_all = NULL  # Not implemented
-  DT_rows_current = NULL  # Not implemented
+  DT_rows_current = data[[id_field]]
 
   list(
     recordsTotal = recordsTotal,

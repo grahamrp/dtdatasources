@@ -4,7 +4,7 @@
 \alias{query_sqlite}
 \title{Sqlite implementation of a query_fun.}
 \usage{
-query_sqlite(con, params, tbl)
+query_sqlite(con, params, tbl, id_field = NA)
 }
 \arguments{
 \item{con}{DBI database connection}
@@ -13,6 +13,8 @@ query_sqlite(con, params, tbl)
 and pagination data.}
 
 \item{tbl}{string, the table/view in sqlite.}
+
+\item{id_field}{string, optional. Field used to identify a row when using \code{input$tbl_rows_selected}.}
 }
 \description{
 Simple implementation showing how to implement a \code{query_fun} for a sqlite DB.
