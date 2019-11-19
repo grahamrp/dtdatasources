@@ -29,8 +29,8 @@ devtools::install_github("grahamrp/dtdatasources")
   - SQLite
       - \[x\] paging
       - \[x\] sorting
+      - \[x\] row selection
       - \[ \] filtering
-      - \[ \] row selection
 
 ### Contributing
 
