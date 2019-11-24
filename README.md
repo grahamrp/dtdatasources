@@ -48,12 +48,9 @@ filtering/sorting/paging on the server where Shiny is running, instead
 of in the user’s web browser, making the table more responsive.
 
 The default DT implementation of server-side processing still requires
-the data to be in a *dataframe* on the server. For very large datasets,
-or where the data is stored outside the Shiny process, for example in a
-database or API, we would not want to copy the entire dataset into a
-dataframe on the server, as it may not have enough resources to hold it
-in memory, or enough processing power to perform the server-side
-filtering/sorting/paging.
+the data to be in a *dataframe* on the server. Sometimes we don’t want
+to put the entire dataset into a dataframe, for example if it is very
+big, or if it naturally belongs in a database or behind an API.
 
 For this reason, `renderDT` provides a `funcFilter` parameter to supply
 our own function that describes how to fetch, filter, sort, and page our
@@ -92,7 +89,6 @@ server <- function(input, output, session) {
   initial_df <- dbGetQuery(con, "SELECT * FROM mtcars LIMIT 0;")
 
   # Create a funcFilter function describing how to get data for a datatable.
-  # The filter factory 
   mtcars_filter <- dtdatasources::sql_filter_factory(
     # Use the sqlite connection created above
     con = con,
