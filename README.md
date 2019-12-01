@@ -30,10 +30,10 @@ Run the examples with
 `shiny::runApp(system.file("shiny-examples/<EXAMPLE>", package =
 "dtdatasources"))`
 
-| Data Source | Features                           | Description                                                                                                                                                                                                                                                                                                       | Example              |
-| ----------- | ---------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------- |
-| SQLite      | Pagination, sorting, row selection | SQLite example using `mtcars` dataset, but can be connected to any sqlite table.                                                                                                                                                                                                                                  | `sqlite_mtcars`      |
-| REST API    | Pagination, sorting, row selection | REST API example connecting to a UK Elections API at [data.parliament.uk](http://lda.data.parliament.uk/elections.json). Parameters vary depending on the API, so a generic implementation for any API is not feasible. This example was chosen as it has paging and sorting and does not require authentication. | `rest_api_elections` |
+| Data Source | Features                           | Description                                                                                                                                                                                                                                                                                                                   | Example              |
+| ----------- | ---------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------- |
+| SQLite      | Pagination, sorting, row selection | SQLite example using `mtcars` dataset, but can be connected to any sqlite table.                                                                                                                                                                                                                                              | `sqlite_mtcars`      |
+| REST API    | Pagination, sorting, row selection | REST API example connecting to a UK Elections API at [data.parliament.uk](http://lda.data.parliament.uk/elections.json). Different APIs support different parameters, so this implementation is written specifically for this API. This API was chosen because it has paging and sorting and does not require authentication. | `rest_api_elections` |
 
 ### Contributing
 
@@ -122,11 +122,15 @@ example. This function adapts the `DT:::dataTablesFilter` code on
 the default `funcFilter` for filtering/sorting/paging dataframes on the
 server.
 
+For SQL implementations, take a look at `sqlite.R` and
+`sql_filter_factory.R` for an
+example.
+
 ## Some References for `funcFilter`
 
 | Description                                                   | URL                                                                                                         |
 | ------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| Description of the overall problem                            | [Google Groups shiny-discuss](https://groups.google.com/forum/#!msg/shiny-discuss/zaPqkMdhwy4/jHGFwBfEBQAJ) |
-| Open issue to make a funcFilter example                       | <https://github.com/rstudio/DT/issues/194>                                                                  |
+| Description of the overall problem that `funcFilter` solves   | [Google Groups shiny-discuss](https://groups.google.com/forum/#!msg/shiny-discuss/zaPqkMdhwy4/jHGFwBfEBQAJ) |
+| Open issue to make a `funcFilter` example                     | <https://github.com/rstudio/DT/issues/194>                                                                  |
 | Custom filtering problem with filter ranges and `filterRow()` | <https://github.com/rstudio/DT/issues/50>                                                                   |
 | Row selection                                                 | <https://github.com/rstudio/DT/issues/75>                                                                   |
