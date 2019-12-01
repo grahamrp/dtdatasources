@@ -23,5 +23,7 @@ Imports:
     DT,
     glue,
     htmltools,
+    httr,
+    jsonlite,
     purrr,
     RSQLite
