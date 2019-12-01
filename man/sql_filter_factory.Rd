@@ -22,7 +22,12 @@ Given a DBI connection and a query function return a funcFilter function
 as required by DT::renderDT.
 }
 \details{
-The \code{con} is enclosed so we don't have to recreate a database connection
+The main purpose of this function is to keep a reference to the database
+connection so as to prevent the need to set up a new connection every time
+data is accessed by the funcFilter.
+
+It also allows for different implementations of \code{query_fun} so as not
+to be limited to just the current sqlite implementation.
 }
 \examples{
 \dontrun{
