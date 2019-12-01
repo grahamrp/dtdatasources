@@ -31,17 +31,20 @@ You can install the development version from [GitHub](https://github.com/) with:
 # install.packages("devtools")
 devtools::install_github("grahamrp/dtdatasources")
 ```
-## Available Data Sources
+## Examples
 
-* SQLite
-  - [x] paging
-  - [x] sorting
-  - [x] row selection
-  - [ ] filtering
+Run the examples with `shiny::runApp(system.file("shiny-examples/<EXAMPLE>", package = "dtdatasources"))` 
+
+| Data Source | Features | Description | Example |
+| ----------- | -------- | ----------- | ------- |
+| SQLite | Pagination, sorting, row selection | SQLite example using `mtcars` dataset, but can be connected to any sqlite table. | `sqlite_mtcars` |
+| REST API | Pagination, sorting, row selection | REST API example connecting to a UK Elections API at [data.parliament.uk](http://lda.data.parliament.uk/elections.json). Parameters vary depending on the API, so a generic implementation for any API is not feasible. This example was chosen as it has paging and sorting and does not require authentication. | `rest_api_elections` |
+
+
 
 ### Contributing
-So far I've only written a basic SQLite implementation, but would like to create
-more. Feedback, bug reports, fixes, and feature requests are welcome, see the [current issues](http://github.com/grahamrp/dtdatasources/issues).
+If you would like to add a data source, please contribute! Also, feedback, 
+bug reports, fixes, and feature requests are welcome, see the [current issues](http://github.com/grahamrp/dtdatasources/issues). 
 
 ## About Custom DT Data Sources
 
@@ -112,9 +115,8 @@ shinyApp(ui, server)
 
 ## Making New Data Sources
 
-If you want to use this example to create your own implementations of DT data
-sources, take a look at `sqlite.R` and provide your own version of the
-`query_sqlite` function for different databases. This function adapts the
+If you want to use these examples to create your own implementations of DT data
+sources, take a look at `rest_api_election.R` for a REST API example. This function adapts the
 `DT:::dataTablesFilter` code on [GitHub](https://github.com/rstudio/DT/blob/master/R/shiny.R), 
 which is the default `funcFilter` for filtering/sorting/paging dataframes on the server.
 
